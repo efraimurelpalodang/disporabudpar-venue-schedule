@@ -1,32 +1,34 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "Jadwal Lapangan — Disporabudpar, Bidang Olahraga",
+  title: "Bidang Olahraga Disporabudpar — Jadwal Lapangan",
   description:
-    "Informasi ketersediaan jadwal lapangan olahraga Disporabudpar, Bidang Olahraga dalam zona waktu WITA.",
+    "Sistem pencatatan dan informasi jadwal lapangan Disporabudpar, Bidang Olahraga.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html
-      lang="id"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">
+    <html lang="id">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
         <QueryProvider>
           {children}
           <Toaster theme="light" position="top-right" richColors closeButton />
