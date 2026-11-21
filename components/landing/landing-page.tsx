@@ -12,6 +12,7 @@ import { Testimonials } from "./testimonials";
 import { Footer } from "./footer";
 import { ContactModal } from "./contact-modal";
 import { MenuOverlay } from "./menu-overlay";
+import { ScheduleDrawer } from "./schedule-drawer";
 
 export function LandingPage() {
   const lenisRef = React.useRef<Lenis | null>(null);
@@ -29,6 +30,8 @@ export function LandingPage() {
 
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isScheduleOpen, setIsScheduleOpen] = React.useState(false);
+  const [selectedVenueId, setSelectedVenueId] = React.useState<string>("ks-tubun");
 
   // Scroll lock management
   const lockScroll = React.useCallback(() => {
@@ -149,79 +152,18 @@ export function LandingPage() {
     };
   }, []);
 
-  // In-view observer & Lines observer
-  React.useEffect(() => {
-    // Reveal inview elements
-    const inviewIO = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const el = entry.target as HTMLElement;
-          const delay = parseFloat(el.dataset.delay || "0");
-          el.style.transitionDelay = delay + "ms";
-          el.classList.add("on");
-          inviewIO.unobserve(el);
-        });
-      },
-      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
-    );
-
-    document.querySelectorAll(".inview").forEach((el) => inviewIO.observe(el));
-
-    // Stacked lines observer
-    function primeLines(el: HTMLElement) {
-      const base = parseFloat(el.dataset.delay || "0");
-      const stagger = parseFloat(el.dataset.stagger || "120");
-      Array.from(el.querySelectorAll(":scope > .line-clip > span")).forEach(
-        (s, i) => {
-          (s as HTMLElement).style.transitionDelay = base + i * stagger + "ms";
-        }
-      );
-    }
-
-    function playLines(el: HTMLElement) {
-      if (!el) return;
-      el.classList.remove("on");
-      void el.offsetWidth;
-      el.classList.add("on");
-    }
-
-    document.querySelectorAll<HTMLElement>(".lines").forEach(primeLines);
-
-    const linesIO = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          playLines(entry.target as HTMLElement);
-          linesIO.unobserve(entry.target);
-        });
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -6% 0px" }
-    );
-
-    document.querySelectorAll<HTMLElement>(".lines").forEach((el) => {
-      if (el.id === "heroTagline") return; // gated by ready
-      if (el.id === "modalTitle") return; // gated by modal open
-      linesIO.observe(el);
-    });
-
-    return () => {
-      inviewIO.disconnect();
-      linesIO.disconnect();
-    };
-  }, []);
-
   // Keyboard escape
   React.useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         if (isModalOpen) handleCloseModal();
         if (isMenuOpen) handleCloseMenu();
+        if (isScheduleOpen) handleCloseSchedule();
       }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [isModalOpen, isMenuOpen]);
+  }, [isModalOpen, isMenuOpen, isScheduleOpen]);
 
   // Navigate with smooth scroll
   const handleNavigate = React.useCallback((href: string) => {
@@ -261,6 +203,23 @@ export function LandingPage() {
     unlockScroll();
   }, [unlockScroll]);
 
+  // Schedule drawer open/close handlers
+  const handleOpenSchedule = React.useCallback(
+    (venueId?: string) => {
+      if (venueId) {
+        setSelectedVenueId(venueId);
+      }
+      lockScroll();
+      setIsScheduleOpen(true);
+    },
+    [lockScroll]
+  );
+
+  const handleCloseSchedule = React.useCallback(() => {
+    setIsScheduleOpen(false);
+    unlockScroll();
+  }, [unlockScroll]);
+
   // When loader completes
   const handleLoaderReady = React.useCallback(() => {
     setIsReady(true);
@@ -288,11 +247,15 @@ export function LandingPage() {
           onOpenContact={handleOpenModal}
           onOpenMenu={handleOpenMenu}
           onNavigate={handleNavigate}
+          onOpenSchedule={handleOpenSchedule}
         />
 
         <Trust trustRef={trustRef} ghostRefs={ghostRefs} />
 
-        <Programs onNavigate={handleNavigate} />
+        <Programs
+          onNavigate={handleNavigate}
+          onOpenSchedule={handleOpenSchedule}
+        />
 
         <Facilities />
 
@@ -300,7 +263,11 @@ export function LandingPage() {
 
         <Testimonials />
 
-        <Footer onOpenContact={handleOpenModal} onNavigate={handleNavigate} />
+        <Footer
+          onOpenContact={handleOpenModal}
+          onNavigate={handleNavigate}
+          onOpenSchedule={handleOpenSchedule}
+        />
       </main>
 
       <ContactModal isOpen={isModalOpen} onClose={handleCloseModal} />
@@ -310,6 +277,14 @@ export function LandingPage() {
         onClose={handleCloseMenu}
         onOpenContact={handleOpenModal}
         onNavigate={handleNavigate}
+        onOpenSchedule={handleOpenSchedule}
+      />
+
+      <ScheduleDrawer
+        isOpen={isScheduleOpen}
+        onClose={handleCloseSchedule}
+        selectedVenueId={selectedVenueId}
+        onSelectVenue={setSelectedVenueId}
       />
     </>
   );

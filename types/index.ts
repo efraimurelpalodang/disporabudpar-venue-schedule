@@ -22,3 +22,5 @@ export interface PeminjamanPublikSlot {
   jam_mulai: string; // HH:00
   jam_selesai: string; // HH:00
 }
+
+export * from "./landing";

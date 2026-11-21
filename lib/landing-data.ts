@@ -1,18 +1,4 @@
-export interface CollectionSlide {
-  img: string;
-  brand: string;
-  title: string;
-  cta: string;
-  alt: string;
-}
-
-export interface TrustSlide {
-  img: string;
-  name: string;
-  role: string;
-  alt: string;
-  headline: [string, string, string, string];
-}
+import { CollectionSlide, TrustSlide } from "@/types/landing";
 
 export const ASSET_BASE =
   "https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000";

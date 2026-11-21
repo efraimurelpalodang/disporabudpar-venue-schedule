@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { BrandIcon } from "./icons";
+import { cn } from "cn";
 
 interface LoaderProps {
   onReady: () => void;
@@ -22,7 +22,6 @@ export function Loader({ onReady, lockScroll, unlockScroll }: LoaderProps) {
     const minVisible = isReduced ? 200 : 1400;
     const exitMs = isReduced ? 0 : 850;
 
-    // Trigger .in transition on next animation frame
     const frameId = requestAnimationFrame(() => {
       setPhase("in");
     });
@@ -50,29 +49,42 @@ export function Loader({ onReady, lockScroll, unlockScroll }: LoaderProps) {
 
   return (
     <div
-      className={`loader ${phase === "in" ? "in" : ""} ${phase === "out" ? "out" : ""}`}
+      className={cn(
+        "fixed inset-0 z-[200] bg-[#0f2f63] text-white flex flex-col items-center justify-center gap-8 transition-transform duration-[850ms] ease-[cubic-bezier(0.65,0,0.35,1)]",
+        phase === "out" ? "-translate-y-[105%]" : "translate-y-0"
+      )}
       id="loader"
       aria-hidden="true"
     >
-      <div className="loader-logos">
+      <div
+        className={cn(
+          "flex items-center justify-center gap-5 sm:gap-9 transition-all duration-850 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          phase === "in" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        )}
+      >
         <img
           src="/icons/banjarbaru.webp"
           alt="Logo Kota Banjarbaru"
-          className="loader-logo"
+          className="h-[3.75rem] sm:h-[5.5rem] w-auto max-w-[5.5rem] sm:max-w-[8rem] object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.4)]"
         />
         <img
           src="/icons/dispora.webp"
           alt="Logo Dispora"
-          className="loader-logo"
+          className="h-[3.75rem] sm:h-[5.5rem] w-auto max-w-[5.5rem] sm:max-w-[8rem] object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.4)]"
         />
         <img
           src="/icons/banjarbaru-emas.webp"
           alt="Logo Banjarbaru Emas"
-          className="loader-logo"
+          className="h-[3.75rem] sm:h-[5.5rem] w-auto max-w-[5.5rem] sm:max-w-[8rem] object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.4)]"
         />
       </div>
-      <div className="loader-track">
-        <div className="loader-fill" />
+      <div className="w-56 h-[2px] rounded-full bg-white/20 overflow-hidden">
+        <div
+          className={cn(
+            "h-full w-full bg-white origin-left transition-transform duration-[1280ms] ease-[cubic-bezier(0.65,0,0.35,1)] delay-[120ms]",
+            phase === "in" ? "scale-x-100" : "scale-x-0"
+          )}
+        />
       </div>
     </div>
   );
