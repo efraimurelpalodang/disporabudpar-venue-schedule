@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { motion } from "motion/react";
 import { ArrowRightIcon, BrandIcon } from "./icons";
 import { titleContainerVariants, titleLineVariants } from "@/lib/animation-variants";
+import { useCurtain } from "@/components/providers/curtain-provider";
 
 interface FooterProps {
   onOpenContact: () => void;
@@ -12,7 +14,11 @@ interface FooterProps {
 }
 
 export function Footer({ onOpenContact, onNavigate, onOpenSchedule }: FooterProps) {
+  const { navigateWithCurtain } = useCurtain();
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("/")) {
+      return;
+    }
     e.preventDefault();
     if (href === "#membership" || href === "#club") {
       if (onOpenSchedule) onOpenSchedule();
@@ -168,6 +174,21 @@ export function Footer({ onOpenContact, onNavigate, onOpenSchedule }: FooterProp
               <a href="#shop" className="hover:text-white transition-colors" onClick={(e) => handleLinkClick(e, "#shop")}>
                 Kontak Petugas
               </a>
+            </li>
+            <li>
+              <Link
+                href="/login"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateWithCurtain("/login");
+                }}
+                className="hover:text-white transition-colors inline-flex items-center gap-1.5 font-medium text-white/95 cursor-pointer"
+              >
+                <span>Masuk</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/15 text-white/90 uppercase tracking-wider font-semibold">
+                  Admin
+                </span>
+              </Link>
             </li>
           </ul>
         </nav>

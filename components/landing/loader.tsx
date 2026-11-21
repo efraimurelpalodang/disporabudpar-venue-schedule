@@ -9,10 +9,19 @@ interface LoaderProps {
   unlockScroll: () => void;
 }
 
+let hasCompletedInitialLandingLoad = false;
+
 export function Loader({ onReady, lockScroll, unlockScroll }: LoaderProps) {
-  const [phase, setPhase] = React.useState<"initial" | "in" | "out" | "done">("initial");
+  const [phase, setPhase] = React.useState<"initial" | "in" | "out" | "done">(() => {
+    return hasCompletedInitialLandingLoad ? "done" : "initial";
+  });
 
   React.useEffect(() => {
+    if (hasCompletedInitialLandingLoad) {
+      onReady();
+      return;
+    }
+
     lockScroll();
 
     const isReduced =
@@ -27,6 +36,7 @@ export function Loader({ onReady, lockScroll, unlockScroll }: LoaderProps) {
     });
 
     const readyTimer = window.setTimeout(() => {
+      hasCompletedInitialLandingLoad = true;
       unlockScroll();
       onReady();
       setPhase("out");

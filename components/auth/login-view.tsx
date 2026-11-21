@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { useCurtain } from "@/components/providers/curtain-provider";
 
 const COURT_BACKGROUNDS = [
   "https://api.getlayers.ai/storage/v1/object/public/public/assets/baseline-88535e4000/1.webp",
@@ -17,6 +18,8 @@ const COURT_BACKGROUNDS = [
 const EXPO_EASE = [0.16, 1, 0.3, 1] as const;
 
 export function LoginView() {
+  const { navigateWithCurtain } = useCurtain();
+
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [emailFocused, setEmailFocused] = React.useState(false);
@@ -45,6 +48,11 @@ export function LoginView() {
       setIsLoading(false);
       toast.info("Fitur login administrator sedang dalam tahap integrasi.");
     }, 800);
+  };
+
+  const handleBackToHome = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    navigateWithCurtain("/");
   };
 
   return (
@@ -244,7 +252,8 @@ export function LoginView() {
             >
               <a
                 href="/"
-                className="text-xs text-[#6b7280] hover:text-[#2563c9] transition-colors"
+                onClick={handleBackToHome}
+                className="text-xs text-[#6b7280] hover:text-[#2563c9] transition-colors cursor-pointer inline-flex items-center gap-1"
               >
                 ← Kembali ke Beranda
               </a>

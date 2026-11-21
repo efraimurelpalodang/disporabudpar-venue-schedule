@@ -1,8 +1,10 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { ArrowRightIcon, BrandIcon, CloseIcon } from "./icons";
 import { cn } from "cn";
+import { useCurtain } from "@/components/providers/curtain-provider";
 
 interface MenuOverlayProps {
   isOpen: boolean;
@@ -18,6 +20,7 @@ const MENU_LINKS = [
   { label: "Fasilitas", href: "#facilities" },
   { label: "Langkah", href: "#testimonials" },
   { label: "Kontak", href: "#contact" },
+  { label: "Masuk", href: "/login" },
 ];
 
 export function MenuOverlay({
@@ -27,7 +30,12 @@ export function MenuOverlay({
   onNavigate,
   onOpenSchedule,
 }: MenuOverlayProps) {
+  const { navigateWithCurtain } = useCurtain();
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("/")) {
+      onClose();
+      return;
+    }
     e.preventDefault();
     onClose();
     if (href === "#schedule") {
@@ -49,7 +57,7 @@ export function MenuOverlay({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-[70] transition-all duration-550 ease-[cubic-bezier(0.16,1,0.3,1)]",
+        "fixed inset-0 z-70 transition-all duration-550 ease-[cubic-bezier(0.16,1,0.3,1)]",
         isOpen ? "pointer-events-auto visible" : "pointer-events-none invisible"
       )}
       id="menuOverlay"
@@ -93,23 +101,48 @@ export function MenuOverlay({
           </div>
 
           <nav className="flex-1 flex flex-col justify-center gap-2 py-8" aria-label="Menu tambahan">
-            {MENU_LINKS.map((link, i) => (
-              <a
-                key={link.label}
-                className={cn(
-                  "block text-5xl sm:text-7xl font-medium tracking-tight leading-tight text-white transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-[#5790e6] w-fit",
-                  isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-7"
-                )}
-                href={link.href}
-                data-menu-link
-                style={{
-                  transitionDelay: isOpen ? `${120 + i * 70}ms` : "0ms",
-                }}
-                onClick={(e) => handleLinkClick(e, link.href)}
-              >
-                {link.label}
-              </a>
-            ))}
+            {MENU_LINKS.map((link, i) => {
+              if (link.href === "/login") {
+                return (
+                  <Link
+                    key={link.label}
+                    href="/login"
+                    className={cn(
+                      "block text-5xl sm:text-7xl font-medium tracking-tight leading-tight text-white transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-[#5790e6] w-fit cursor-pointer",
+                      isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-7"
+                    )}
+                    data-menu-link
+                    style={{
+                      transitionDelay: isOpen ? `${120 + i * 70}ms` : "0ms",
+                    }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onClose();
+                      navigateWithCurtain("/login");
+                    }}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              }
+              return (
+                <a
+                  key={link.label}
+                  className={cn(
+                    "block text-5xl sm:text-7xl font-medium tracking-tight leading-tight text-white transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] hover:text-[#5790e6] w-fit",
+                    isOpen ? "opacity-100 translate-y-0" : "opacity-0 translate-y-7"
+                  )}
+                  href={link.href}
+                  data-menu-link
+                  style={{
+                    transitionDelay: isOpen ? `${120 + i * 70}ms` : "0ms",
+                  }}
+                  onClick={(e) => handleLinkClick(e, link.href)}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
           </nav>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 border-t border-white/15 pt-8">

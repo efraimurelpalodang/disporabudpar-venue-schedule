@@ -220,6 +220,22 @@ export function LandingPage() {
     unlockScroll();
   }, [unlockScroll]);
 
+  // Menutup menu navigasi & overlay saat transisi halaman dimulai
+  React.useEffect(() => {
+    const handleCurtainStart = () => {
+      setIsMenuOpen(false);
+      setIsModalOpen(false);
+      setIsScheduleOpen(false);
+      unlockScroll();
+    };
+
+    window.addEventListener("page-curtain-start", handleCurtainStart);
+
+    return () => {
+      window.removeEventListener("page-curtain-start", handleCurtainStart);
+    };
+  }, [unlockScroll]);
+
   // When loader completes
   const handleLoaderReady = React.useCallback(() => {
     setIsReady(true);

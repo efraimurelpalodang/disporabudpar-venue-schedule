@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { CurtainProvider } from "@/components/providers/curtain-provider";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -30,7 +31,9 @@ export default function RootLayout({
       </head>
       <body>
         <QueryProvider>
-          {children}
+          <CurtainProvider>
+            {children}
+          </CurtainProvider>
           <Toaster theme="light" position="top-right" richColors closeButton />
         </QueryProvider>
       </body>

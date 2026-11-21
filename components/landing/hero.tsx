@@ -1,10 +1,12 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { motion } from "motion/react";
 import { BrandIcon } from "./icons";
 import { COLLECTION_SLIDES } from "@/lib/landing-data";
 import { cn } from "cn";
+import { useCurtain } from "@/components/providers/curtain-provider";
 
 interface HeroProps {
   heroRef: React.RefObject<HTMLElement | null>;
@@ -31,6 +33,7 @@ export function Hero({
   onNavigate,
   onOpenSchedule,
 }: HeroProps) {
+  const { navigateWithCurtain } = useCurtain();
   const [collIndex, setCollIndex] = React.useState(0);
   const [collFading, setCollFading] = React.useState(false);
   const collTimerRef = React.useRef<number | null>(null);
@@ -77,6 +80,9 @@ export function Hero({
   }, [collectionOn, collIndex, goCollection]);
 
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("/")) {
+      return;
+    }
     e.preventDefault();
     onNavigate(href);
   };
@@ -107,6 +113,16 @@ export function Hero({
           <a href="#facilities" className="text-white/90 hover:text-white transition-colors whitespace-nowrap" onClick={(e) => handleLinkClick(e, "#facilities")}>
             Fasilitas
           </a>
+          <Link
+            href="/login"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithCurtain("/login");
+            }}
+            className="text-white/90 hover:text-white transition-colors whitespace-nowrap cursor-pointer"
+          >
+            Masuk
+          </Link>
         </nav>
         <a
           className="flex items-center gap-2 flex-1 justify-start lg:justify-center text-base font-medium uppercase tracking-[0.2em] text-white whitespace-nowrap"
